@@ -172,6 +172,7 @@ class Bank(db.Model):
     phone = db.Column(db.String(20))
     contact_name = db.Column(db.String(100))
     comments = db.Column(db.String(255))
+    
     def to_dict(self, include_email=False):
         data = {
             'id': self.id,
@@ -184,7 +185,7 @@ class Bank(db.Model):
         return data
     
     def from_dict(self, data):
-        for field in ['qr', 'name', 'phone', 'contact_name']:
+        for field in ['qr', 'name', 'phone', 'contact_name', 'comments']:
             if field in data:
                 setattr(self, field, data[field])
                                  
@@ -287,20 +288,20 @@ class Room(db.Model):
     description = db.Column(db.Text())
         
     def to_dict(self, include_email=False):
-        data = {
-            
+        data = {            
             'id': self.id,
             'qr': self.qr,
             'name': self.name,
             'type': self.type,
             'size': self.size,
+            'state': self.state,
             'max_plants': self.max_plants,
             'description': self.description                    
         }
         return data
     
     def from_dict(self, data):
-        for field in ['qr', 'name', 'type', 'size', 'max_plants', 'description']:
+        for field in ['qr', 'name', 'type', 'size','state', 'max_plants', 'description']:
             if field in data:
                 setattr(self, field, data[field])
                 
@@ -313,17 +314,43 @@ class Line(db.Model):
         
     def to_dict(self, include_email=False):
         data = {
-            
             'id': self.id,
             'qr': self.qr,
             'x_axis_qty': self.x_axis_qty,
             'y_axis_qty': self.y_axis_qty,
-            'description': self.priority                    
+            'description': self.description                    
         }
         return data
     
     def from_dict(self, data):
         for field in ['qr', 'x_axis_qty', 'y_axis_qty', 'description']:
+            if field in data:
+                setattr(self, field, data[field])
+
+class Spot(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    qr = db.Column(db.String(255))
+    room_id = db.Column(db.Integer, db.ForeignKey("room.id"))
+    line_id = db.Column(db.Integer, db.ForeignKey("line.id"))
+    coor_x = db.Column(db.Integer)
+    coord_y = db.Column(db.Integer)
+    description = db.Column(db.Text())
+        
+    def to_dict(self, include_email=False):
+        data = {
+            
+            'id': self.id,
+            'qr': self.qr,
+            'room_id': self.room_id,
+            'line_id': self.line_id,
+            'coord_x': self.coord_x,
+            'coord_y': self.coord_y,
+            'description': self.description                    
+        }
+        return data
+    
+    def from_dict(self, data):
+        for field in ['qr', 'room_id', 'line_id', 'coord_x', 'coord_y', 'description']:
             if field in data:
                 setattr(self, field, data[field])
                
@@ -342,12 +369,13 @@ class Germoplasm(db.Model):
             'qr': self.qr,
             'genetic_id': self.genetic_id,
             'format': self.format,
-            'start_date': self.start_date                  
+            'start_date': self.start_date,                  
+            'comments': self.comments                  
         }
         return data
     
     def from_dict(self, data):
-        for field in ['qr', 'name', 'type', 'size', 'max_plants', 'description']:
+        for field in ['qr', 'genetic_id', 'format', 'start_date', 'comments']:
             if field in data:
                 setattr(self, field, data[field])     
 
@@ -359,6 +387,7 @@ class Cycle(db.Model):
     end_date = db.Column(db.DateTime)
     type = db.Column(db.String(50))
     plants_qty = db.Column(db.Integer)
+    comments = db.Column(db.Text())
         
     def to_dict(self, include_email=False):
         data = {
@@ -369,12 +398,13 @@ class Cycle(db.Model):
             'start_date': self.start_date,
             'end_date': self.end_date,
             'type': self.type,
-            'plants_qty': self.plants_qty                    
+            'plants_qty': self.plants_qty,
+            'comments': self.comments,
         }
         return data
     
     def from_dict(self, data):
-        for field in ['qr', 'name', 'type', 'size', 'max_plants', 'description']:
+        for field in ['qr', 'room_id', 'start_date', 'end_date', 'type', 'plants_qty', 'comments']:
             if field in data:
                 setattr(self, field, data[field])         
           
@@ -389,8 +419,8 @@ class Plant(db.Model):
     start_date = db.Column(db.DateTime)
     end_date = db.Column(db.DateTime)
     plants_qty = db.Column(db.Integer)
-    birthdate = db.Column(db.DateTime)
-    notifications_profile_id = db.Column(db.Integer, db.ForeignKey("notiffications_profile.id"))
+    comments = db.Column(db.Text())
+
     
     def to_dict(self, include_email=False):
         data = {
@@ -403,12 +433,64 @@ class Plant(db.Model):
             'trimmer_id': self.trimmer_id,
             'start_date': self.start_date,
             'end_date': self.end_date,
-            'plants_qty': self.plants_qty
+            'plants_qty': self.plants_qty,
+            'comments': self.comments
                     
         }
         return data
     
     def from_dict(self, data):
-        for field in ['qr', 'cycle_id', 'genetic_id', 'germoplasm_id', 'spot_id', 'trimmer_id', 'start_date', 'end_date', 'plants_qty']:
+        for field in ['qr', 'cycle_id', 'genetic_id', 'germoplasm_id', 'spot_id', 'trimmer_id', 'start_date', 'end_date', 'plants_qty', 'comments']:
+            if field in data:
+                setattr(self, field, data[field])
+                
+class Multimedia(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    plant_id = db.Column(db.Integer, db.ForeignKey("plant.id"))
+    name = db.Column(db.String(100))
+    url = db.Column(db.String(100))
+    date = db.Column(db.DateTime)
+    description = db.Column(db.Text())
+        
+    def to_dict(self, include_email=False):
+        data = {
+            
+            'id': self.id,
+            'plant_id': self.plant_id,
+            'name': self.name,
+            'url': self.url,
+            'date': self.date,
+            'description': self.description,
+        }
+        return data
+    
+    def from_dict(self, data):
+        for field in ['plant_id', 'name', 'url', 'date', 'description']:
+            if field in data:
+                setattr(self, field, data[field])
+    
+    
+class Bitacora(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    plant_id = db.Column(db.Integer, db.ForeignKey("plant.id"))
+    cycle_id = db.Column(db.Integer, db.ForeignKey("cycle.id"))
+    room_id = db.Column(db.Integer, db.ForeignKey("room.id"))
+    title = db.Column(db.String(255))
+    description = db.Column(db.Text())
+        
+    def to_dict(self, include_email=False):
+        data = {
+            
+            'id': self.id,
+            'plant_id': self.plant_id,
+            'cycle_id': self.cycle_id,
+            'room_id': self.room_id,
+            'title': self.title,
+            'description': self.description,
+        }
+        return data
+    
+    def from_dict(self, data):
+        for field in ['plant_id', 'cycle_id', 'room_id', 'title', 'description']:
             if field in data:
                 setattr(self, field, data[field])
