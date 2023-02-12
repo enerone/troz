@@ -165,7 +165,7 @@ class Post(db.Model):
     def __repr__(self):
         return '<Post {}>'.format(self.body)
 
-class Bank(db.Model):
+class Bank(PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     qr = db.Column(db.String(255))
     name = db.Column(db.String(70))
@@ -189,7 +189,7 @@ class Bank(db.Model):
             if field in data:
                 setattr(self, field, data[field])
                                  
-class Genetic(db.Model):
+class Genetic(PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     qr = db.Column(db.String(255))
     bank_id = db.Column(db.Integer, db.ForeignKey('bank.id'))
@@ -222,7 +222,7 @@ class Genetic(db.Model):
             if field in data:
                 setattr(self, field, data[field])
 
-class Notification(db.Model):
+class Notification(PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.id'))
     type = db.Column(db.String(50))
@@ -247,7 +247,7 @@ class Notification(db.Model):
                 setattr(self, field, data[field])
 
 
-class Employee(db.Model):
+class Employee(PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     qr = db.Column(db.String(255))
     supervisor = db.Column(db.Integer, db.ForeignKey("employee.id"))
@@ -280,7 +280,7 @@ class Employee(db.Model):
             if field in data:
                 setattr(self, field, data[field])
     
-class Room(db.Model):
+class Room(PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     qr = db.Column(db.String(255))
     name = db.Column(db.String(255))
@@ -308,7 +308,7 @@ class Room(db.Model):
             if field in data:
                 setattr(self, field, data[field])
                 
-class Line(db.Model):
+class Line(PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     qr = db.Column(db.String(255))
     x_axix_qty = db.Column(db.Integer)
@@ -330,7 +330,7 @@ class Line(db.Model):
             if field in data:
                 setattr(self, field, data[field])
 
-class Spot(db.Model):
+class Spot(PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     qr = db.Column(db.String(255))
     room_id = db.Column(db.Integer, db.ForeignKey("room.id"))
@@ -357,7 +357,7 @@ class Spot(db.Model):
             if field in data:
                 setattr(self, field, data[field])
                
-class Germoplasm(db.Model):
+class Germoplasm(PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     qr = db.Column(db.String(255))
     genetic_id = db.Column(db.Integer, db.ForeignKey("genetic.id"))
@@ -382,7 +382,7 @@ class Germoplasm(db.Model):
             if field in data:
                 setattr(self, field, data[field])     
 
-class Cycle(db.Model):
+class Cycle(PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     qr = db.Column(db.String(255))
     room_id = db.Column(db.Integer, db.ForeignKey("room.id"))
@@ -411,7 +411,7 @@ class Cycle(db.Model):
             if field in data:
                 setattr(self, field, data[field])         
           
-class Plant(db.Model):
+class Plant(PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     qr = db.Column(db.String(255))
     cycle_id = db.Column(db.Integer, db.ForeignKey("cycle.id"))
@@ -447,7 +447,7 @@ class Plant(db.Model):
             if field in data:
                 setattr(self, field, data[field])
                 
-class Multimedia(db.Model):
+class Multimedia(PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     plant_id = db.Column(db.Integer, db.ForeignKey("plant.id"))
     name = db.Column(db.String(100))
@@ -473,7 +473,7 @@ class Multimedia(db.Model):
                 setattr(self, field, data[field])
     
     
-class Bitacora(db.Model):
+class Bitacora(PaginatedAPIMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     plant_id = db.Column(db.Integer, db.ForeignKey("plant.id"))
     cycle_id = db.Column(db.Integer, db.ForeignKey("cycle.id"))

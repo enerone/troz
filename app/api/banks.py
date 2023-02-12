@@ -21,9 +21,10 @@ def get_banks():
     return jsonify(data)
 
 @bp.route('/banks', methods=['POST'])
+@token_auth.login_required
 def create_bank():
     data = request.get_json() or {}
-    if 'name' not in data or 'phone' not in data or 'contact_name' not in data:
+    if 'name' not in data or 'phone' not in data:
         return bad_request('must include name, phone and contact_name')
     bank = Bank()
     bank.from_dict(data)
